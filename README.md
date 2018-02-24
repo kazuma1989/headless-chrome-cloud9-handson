@@ -114,12 +114,12 @@ Headless Chrome の動作を確認しやすくするため、最低限のスタ�
 
 </details>
 
-### serve インストール
+### http-server インストール
 
-index.html を見る web サーバーとして `serve` をインストールします：
+index.html を見る web サーバーとして `http-server` をインストールします：
 
 ```bash
-npm install --save-dev serve
+npm install --save-dev http-server
 ```
 
 ```diff
@@ -130,16 +130,16 @@ npm install --save-dev serve
 + └── package-lock.json
 ```
 
-package.json には `serve` スクリプトを追加し、`npm run serve` によってサーバーが起動するようにしておきます：
+package.json には `start` スクリプトを追加し、`npm run start` によってサーバーが起動するようにしておきます：
 
 ```diff
    "scripts": {
-+    "serve": "serve ./",
++    "start": "http-server ./",
      "test": "echo \"Error: no test specified\" && exit 1"
    },
 ```
 
-`npm run serve` によってサーバーを起動したら、Cloud9 メニュー > Preview > Preview Running Application を選択して、アプリケーションを表示します。
+`npm run start` によってサーバーを起動したら、Cloud9 メニュー > Preview > Preview Running Application を選択して、アプリケーションを表示します。
 以下のような画面が表示されれば成功です：
 
 ![App preview](images/app-preview.png)
@@ -199,13 +199,13 @@ package.json に test スクリプトの定義を追加しておきます：
 
 ```diff
    "scripts": {
-     "serve": "serve ./",
+     "start": "http-server ./",
 -    "test": "echo \"Error: no test specified\" && exit 1"
 +    "test": "node ./smoke.test.js"
    },
 ```
 
-`npm run serve` でアプリケーションを起動し、別のターミナルから `npm run test` を実行することでテストができます…：
+`npm run start` でアプリケーションを起動し、別のターミナルから `npm run test` を実行することでテストができます…：
 
 ```bash
 (node:8637) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): Error: Failed to launch chrome!
@@ -240,7 +240,17 @@ TROUBLESHOOTING: https://github.com/GoogleChrome/puppeteer/blob/master/docs/trou
 sh install-chrome-dependencies.sh
 ```
 
-`npm run serve` の後に `npm run test` で、今度こそテストが実行され、スクリーンショットが生成されます：
+`npm run start` の後に `npm run test` で、今度こそテストが実行され、スクリーンショットが生成されます：
+
+```diff
+  myapp/
+  ├── index.html
+  ├── node_modules
+  ├── package.json
+  ├── package-lock.json
++ ├── screenshot.png
+  └── smoke.test.js
+```
 
 ![Generated screenshot](images/screenshot-tofu.png)
 
@@ -261,14 +271,147 @@ sudo yum install -y vlgothic-fonts
 
 🎉🎉🎉
 
-## アプリケーション拡張 - ajax 機能の追加
+## アプリケーション拡張
 
-### script.js 作成
+ここまでで、Cloud9 上で Headless Chrome を使えるようになり、開発のベースは整いました。
+あとは自分のアプリケーション開発に生かしてもらえれば良いですが、参考までにアプリケーションを拡張してみます。
 
-### JSON Server インストール
+
+### 検索機能の追加
+
+index.html を次のように修正します：
+
+```diff
+-<main></main>
++<main>
++    <input id="name">
++    <button id="search">Search</button>
++    <pre id="result"></pre>
++</main>
+ <script>
+-    const date = new Date().toLocaleString('ja-JP-u-ca-japanese', {
+-        year: 'numeric',
+-        month: 'short',
+-        day: 'numeric',
+-        weekday: 'short',
+-    });
++    const input = document.querySelector('#name');
++    const button = document.querySelector('#search');
++    const result = document.querySelector('#result');
++
++    button.addEventListener('click', async event => {
++        const name = input.value;
++        const response = await fetch(`/users?name_like=${name}`, {
++            credentials: 'same-origin'
++        });
+
+-    document.querySelector('main').textContent = date;
++        result.textContent = await response.text();
++    });
+ </script>
+```
+
+次の図のように、ボタンを押すとユーザーを検索する機能を追加しました：
+
+![Modified app preview](images/modified-app-preview.png)
+
+しかし実際には、HTML を修正しただけでは検索の API `/users` が存在しないため、404 エラーにしかなりません。
+[JSON Server](https://github.com/typicode/json-server) をインストールし、API として機能させます：
+
+```bash
+npm install --save-dev json-server
+```
+
+中身のデータは `stub.json` として用意し：
+
+```diff
+  myapp/
+  ├── index.html
+  ├── node_modules
+  ├── package.json
+  ├── package-lock.json
+  ├── screenshot.png
+  ├── smoke.test.js
++ └── stub.json
+```
+
+<details>
+<summary>stub.json</summary>
+
+```json
+{
+    "users": [{
+        "id": 1,
+        "name": "John Doe"
+    }, {
+        "id": 2,
+        "name": "Jane Doe"
+    }]
+}
+```
+
+</details>
+
+`package.json` には、http-server からのプロキシー設定と `stub` スクリプトを追加しておきます：
+
+```diff
+   "scripts": {
+-    "start": "http-server ./",
++    "start": "http-server ./ --proxy http://localhost:3000",
++    "stub": "json-server --watch ./stub.json",
+     "test": "node ./smoke.test.js"
+   },
+```
+
+`npm run start` と `npm run stub` は別のターミナルから実行する必要がありますが、起動させれば検索機能がちゃんと動いているのが見られます。
 
 ### JSON API のモックテスト
 
+アプリケーションの拡張に合わせて、`smoke.test.js` も拡張してみます：
+
+```diff
++const { URL } = require('url');
+ const puppeteer = require('puppeteer');
+
+ (async() => {
+     const browser = await puppeteer.launch();
+     const page = await browser.newPage();
+
++    await page.setRequestInterception(true);
++    page.on('request', request => {
++        const { pathname } = new URL(request.url());
++        if (pathname === '/users') {
++            const mockedData = [{
++                id: 3,
++                name: 'Jackson Doe'
++            }];
++            request.respond({
++                contentType: 'application/json',
++                body: JSON.stringify(mockedData)
++            });
++        }
++        else {
++            request.continue();
++        }
++    });
++
+     await page.goto('http://localhost:8080/');
++
++    await page.click('#name');
++    await page.keyboard.type('doe');
++    await page.click('#search');
++
+     await page.screenshot({ path: 'screenshot.png' });
+
+     await page.close();
+```
+
+`/users` へのリクエストをインターセプトして、`stub.json` には存在しないデータを返すようにしています。
+`npm run test` の結果はこの通りです：
+
+![Mocked results](mocked-results.png)
+
+🎉🎉🎉🎉
 
 
 # Optional trainings

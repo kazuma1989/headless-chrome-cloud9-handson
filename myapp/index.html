@@ -11,14 +11,22 @@
     }
 </style>
 
-<main></main>
+<main>
+    <input id="name">
+    <button id="search">Search</button>
+    <pre id="result"></pre>
+</main>
 <script>
-    const date = new Date().toLocaleString('ja-JP-u-ca-japanese', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        weekday: 'short',
-    });
+    const input = document.querySelector('#name');
+    const button = document.querySelector('#search');
+    const result = document.querySelector('#result');
 
-    document.querySelector('main').textContent = date;
+    button.addEventListener('click', async event => {
+        const name = input.value;
+        const response = await fetch(`/users?name_like=${name}`, {
+            credentials: 'same-origin'
+        });
+
+        result.textContent = await response.text();
+    });
 </script>

@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "serve ./",
+    "start": "http-server ./ --proxy http://localhost:3000",
+    "stub": "json-server --watch ./stub.json",
     "test": "node ./smoke.test.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "puppeteer": "^1.1.1",
-    "serve": "^6.4.11"
+    "http-server": "^0.11.1",
+    "json-server": "^0.12.1",
+    "puppeteer": "^1.1.1"
   }
 }
