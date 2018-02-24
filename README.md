@@ -23,6 +23,7 @@ GUI のない（まさに Cloud9 インスタンスのような）Linux 上で�
 
 他のクラウド IDE には、たとえば [Codeanywhere](https://codeanywhere.com/) があります。
 クラウド IDE の中から Cloud9 を選択したのは、Codeanywhere が劣っているからではなく、既に持っていた AWS アカウントによって Cloud9 を簡単に利用できたからです。
+
 必要なのは AWS EC2 の利用料のみで、EC2 の知識があれば VPC 内の他のサーバーと連携することも可能という柔軟性を持ち、とにかくハードルが低いのがよいですね。
 
 ### Create environment
@@ -37,35 +38,7 @@ Environment settings は、デフォルト (`EC2`, `t2.micro`, `After 30 minutes
 数分待てばインスタンスが起動し、セットアップは完了です。
 簡単！
 
----
-ここからは、Cloud9 上での操作です。
-しばらくターミナルを使った CLI 操作が続きます。
-
-
-## Git セットアップ
-
-Git はあらかじめインストールされていますが、初期状態ではコミットすらままならないので、最低限のセットアップをしておきます。
-
-### `user.name`, `user.email`, `core.editor` の変更
-
-まず、自分の名前とメールアドレスを設定します：
-
-```bash
-git config --global user.name <your name>
-git config --global user.email <your email>
-```
-
-次に、コミットコメントを書くエディターです。
-Amazon Linux では nano がデフォルト設定（しかも .bashrc に書かれている！）のようなので、Vim しか使えない私は変更しておきます。
-`vim ~/.bashrc` で .bashrc を開き、23 行目あたりを編集します：
-
-```diff
-  # Set default editor for git
-- git config --global core.editor /usr/bin/nano
-+ git config --global core.editor /usr/bin/vim
-```
-
-編集後は `. ~/.bashrc` によって、現在のターミナルにも設定を適用しておきます。
+コードを書くまえに [Git セットアップ (optional)](docs/git-setup.md) をおすすめします。
 
 
 ## Web アプリケーションの作成
@@ -178,7 +151,7 @@ npm install --save-dev puppeteer
 ### smoke.test.js 作成
 
 アプリケーションが煙をあげていないかチェックする、最低限のテストを追加します。
-とは言っても、スクリーンショットを 1 枚撮るだけですが：
+とは言っても、スクリーンショットを 1 枚撮るだけです：
 
 ```diff
   myapp/
@@ -242,8 +215,7 @@ TROUBLESHOOTING: https://github.com/GoogleChrome/puppeteer/blob/master/docs/trou
 
 - [MockingBot - Run Puppeteer/Chrome Headless on EC2 Amazon Linux](https://mockingbot.com/posts/run-puppeteer-chrome-headless-on-ec2-amazon-linux)
 
-ここに書かれている、必要なコマンドは、次のスクリプトにまとめたので、これを実行するだけで OK です：
-
+ここに書かれている、必要なコマンドは、次のスクリプトにまとめたので、これを実行するだけで OK です：  
 [install-chrome-dependencies.sh](install-chrome-dependencies.sh)
 
 ```bash
