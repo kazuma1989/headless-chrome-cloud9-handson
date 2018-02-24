@@ -59,7 +59,7 @@ git config --global user.email <your email>
 Amazon Linux では nano がデフォルト設定（しかも .bashrc に書かれている！）のようなので、Vim しか使えない私は変更しておきます。
 `vim ~/.bashrc` で .bashrc を開き、23 行目あたりを編集します：
 
-```diff:~/.bashrc
+```diff
   # Set default editor for git
 - git config --global core.editor /usr/bin/nano
 + git config --global core.editor /usr/bin/vim
@@ -67,28 +67,17 @@ Amazon Linux では nano がデフォルト設定（しかも .bashrc に書か�
 
 編集後は `. ~/.bashrc` によって、現在のターミナルにも設定を適用しておきます。
 
-### Tig インストール (optional)
-
-Git をグラフィカルに利用したい場合は、Tig をインストールしておきます。
-
-```bash
-sudo yum install -y tig
-```
-
-
-## サンプルプロジェクトのクローン
-
-https://github.com/kazuma1989/headless-chrome-cloud9-handson.git
-
-
-## Node v8 インストール
-
-### Yarn インストール (optional)
-
 
 ## Web アプリケーションの作成
 
+サンプルは [kazuma1989/headless-chrome-cloud9-handson: Try Headless Chrome (with Puppeteer) on AWS Cloud9 (EC2 Amazon Linux).](https://github.com/kazuma1989/headless-chrome-cloud9-handson) にあります。
+
 ### index.html 作成
+
+```html
+```
+
+### Node v8 インストール
 
 ### serve インストール
 
