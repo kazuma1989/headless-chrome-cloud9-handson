@@ -3,7 +3,7 @@
 [AWS Cloud9](https://aws.amazon.com/cloud9/) 上で [Headless Chrome](https://chromium.googlesource.com/chromium/src/+/lkgr/headless/README.md) を使ってみるハンズオンです。
 
 **Cloud9** は、ブラウザーのみでコードを記述、実行、デバッグできるクラウドベースの統合開発環境 (IDE) です。
-クラウド上の Linux インスタンスをブラウザから覗くというスタイルなので、ローカルマシンへのインストールは一切不要です。
+クラウド上の Linux インスタンスをブラウザーから覗くというスタイルなので、ローカルマシンへのインストールは一切不要です。
 
 **Headless Chrome** は、GUI を必要としない Chrome ブラウザーです。
 GUI のない（まさに Cloud9 インスタンスのような）Linux 上でも簡単に実行でき、ブラウザー操作を自動化するのに役立ちます。
@@ -23,7 +23,7 @@ GUI のない（まさに Cloud9 インスタンスのような）Linux 上で�
 
 他のクラウド IDE には、たとえば [Codeanywhere](https://codeanywhere.com/) があります。
 クラウド IDE の中から Cloud9 を選択したのは、Codeanywhere が劣っているからではなく、既に持っていた AWS アカウントによって Cloud9 を簡単に利用できたからです。
-必要なのは AWS EC2 の利用料のみで、EC2 の知識があれば VPC 内の他のサーバーと連携することも可能で、とにかくハードルが低いのがよいですね。
+必要なのは AWS EC2 の利用料のみで、EC2 の知識があれば VPC 内の他のサーバーと連携することも可能という柔軟性を持ち、とにかくハードルが低いのがよいですね。
 
 ### Create environment
 
@@ -133,6 +133,14 @@ index.html を見る web サーバーとして `serve` をインストールし�
 npm install --save-dev serve
 ```
 
+```diff
+  myapp/
+  ├── index.html
++ ├── node_modules
+  ├── package.json
++ └── package-lock.json
+```
+
 package.json には `serve` スクリプトを追加し、`npm run serve` によってサーバーが起動するようにしておきます：
 
 ```diff
@@ -150,9 +158,63 @@ package.json には `serve` スクリプトを追加し、`npm run serve` によ
 
 ## Headless Chrome によるテスト作成
 
+### Why Headless Chrome? Puppeteer?
+
+他のヘッドレスブラウザーには、たとえば [PhantomJS](http://phantomjs.org/) や [Nightmare](http://www.nightmarejs.org/) があります。
+これらは独自のエンジンや [Electron](https://electronjs.org/) ベースのエンジン、すなわち Chrome とは異なったエンジンで動作するのに対し、Headless Chrome は Chrome 本体の起動モードの一つです。
+とくに理由がなければ、ユーザーが使う「本物」でテストできるほうが好ましいでしょう。
+
+[Puppeteer](https://github.com/GoogleChrome/puppeteer) は、Headless Chrome の Node.js API です。
+同様のライブラリーにたとえば [Chromeless](https://github.com/graphcool/chromeless) がありますが、Puppeteer は Chrome 開発チーム製である点で、一線を画しています。
+
 ### Puppeteer インストール
 
+Puppeteer にはデフォルトで Chrome が同梱されるので、インストールはこれだけです：
+
+```bash
+npm install --save-dev puppeteer
+```
+
 ### smoke.test.js 作成
+
+アプリケーションが煙をあげていないかチェックする、最低限のテストを追加します。
+とは言っても、スクリーンショットを 1 枚撮るだけですが：
+
+```diff
+  myapp/
+  ├── index.html
+  ├── node_modules
+  ├── package.json
+  ├── package-lock.json
++ └── smoke.test.js
+```
+
+```js
+const puppeteer = require('puppeteer');
+
+(async() => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    await page.goto('http://localhost:8080/');
+    await page.screenshot({ path: 'example.png' });
+
+    await page.close();
+    await browser.close();
+})();
+```
+
+package.json に test スクリプトの定義を追加しておきます：
+
+```diff
+   "scripts": {
+     "serve": "serve ./",
+-    "test": "echo \"Error: no test specified\" && exit 1"
++    "test": "node ./smoke.test.js"
+   },
+```
+
+`npm run serve` でアプリケーションを起動し、`npm run test` でテストが実行されます。
 
 
 ## Troubleshooting Puppeteer on Cloud9
