@@ -409,7 +409,7 @@ npm install --save-dev json-server
 `/users` へのリクエストをインターセプトして、`stub.json` には存在しないデータを返すようにしています。
 `npm run test` の結果はこの通りです：
 
-![Mocked results](mocked-results.png)
+![Mocked results](images/mocked-results.png)
 
 🎉🎉🎉🎉
 
