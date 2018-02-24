@@ -82,6 +82,9 @@ Headless Chrome の動作を確認しやすくするため、最低限のスタ�
   └── package.json
 ```
 
+<details>
+<summary>index.html</summary>
+
 ```html
 <!DOCTYPE html>
 <meta charset="UTF-8">
@@ -108,6 +111,8 @@ Headless Chrome の動作を確認しやすくするため、最低限のスタ�
     document.querySelector('main').textContent = date;
 </script>
 ```
+
+</details>
 
 ### serve インストール
 
@@ -138,6 +143,8 @@ package.json には `serve` スクリプトを追加し、`npm run serve` によ
 以下のような画面が表示されれば成功です：
 
 ![App preview](images/app-preview.png)
+
+🎉
 
 
 ## Headless Chrome によるテスト作成
@@ -235,12 +242,24 @@ sh install-chrome-dependencies.sh
 
 `npm run serve` の後に `npm run test` で、今度こそテストが実行され、スクリーンショットが生成されます：
 
-![Generated screenshot](myapp/screenshot.png)
+![Generated screenshot](images/screenshot-tofu.png)
 
-🎉
+🎉🎉
 
 ### Install a Japanese font
 
+Headless Chrome によってスクリーンショットを撮ることはできましたが、日本語が tofu になっています。
+これは Chrome の問題ではなく、Cloud9 のインスタンスに日本語フォントがインストールされていないためです。
+
+以下の方法で [VLゴシック](http://vlgothic.dicey.org/) をインストールして解決します：
+
+```bash
+sudo yum install -y vlgothic-fonts
+```
+
+![Generated screenshot without tofu](images/screenshot-notofu.png)
+
+🎉🎉🎉
 
 ## アプリケーション拡張 - ajax 機能の追加
 
@@ -251,10 +270,23 @@ sh install-chrome-dependencies.sh
 ### JSON API のモックテスト
 
 
+
 # Optional trainings
+
+<details>
+<summary>No content yet</summary>
 
 ## Install Jest
 
 ## Install Webpack
 
 ## Install SPA frameworks
+    
+</details>
+
+
+
+# 参考文献
+
+- [MockingBot - Run Puppeteer/Chrome Headless on EC2 Amazon Linux](https://mockingbot.com/posts/run-puppeteer-chrome-headless-on-ec2-amazon-linux)
+- [CentOSでもWindowsでも使える！ 日本語フォント（ゴシック編） | 株式会社ビヨンド](http://beyondjapan.com/blog/2017/01/japanese-gothic-fonts-on-linux)
