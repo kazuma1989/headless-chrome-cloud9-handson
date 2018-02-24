@@ -85,6 +85,7 @@ nvm alias default v8.9.4
 次に、自分のプロジェクトフォルダーを作成し、Node.js プロジェクトとして初期化します：
 
 ```bash
+cd ~/environment/
 mkdir myapp
 cd myapp
 npm init -y
@@ -100,16 +101,51 @@ npm init -y
 ### index.html 作成
 
 index.html を追加します。
+Headless Chrome の動作を確認するため、最低限のスタイルとスクリプトを追加しています：
 
 ```diff
   myapp/
-+ └── index.html
++ ├── index.html
+  └── package.json
 ```
 
 ```html
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>My App</title>
+<style>
+    main {
+        color: red;
+    }
+</style>
+
+<main></main>
+<script>
+    document.querySelector('main').textContent = new Date();
+</script>
 ```
 
 ### serve インストール
+
+index.html を見る web サーバーとして `serve` をインストールします：
+
+```bash
+npm install --save-dev serve
+```
+
+package.json には `serve` スクリプトを追加し、`npm run serve` によってサーバーが起動するようにしておきます：
+
+```diff
+   "scripts": {
++    "serve": "serve ./",
+     "test": "echo \"Error: no test specified\" && exit 1"
+   },
+```
+
+`npm run serve` によってサーバーを起動したら、Cloud9 メニュー > Preview > Preview Running Application を選択して、アプリケーションを表示します。
+以下のような画面が表示されれば成功です：
+
+![App preview](images/01_serve-install-result.png)
 
 
 ## Headless Chrome によるテスト作成
