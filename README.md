@@ -72,12 +72,42 @@ Amazon Linux では nano がデフォルト設定（しかも .bashrc に書か�
 
 サンプルは [kazuma1989/headless-chrome-cloud9-handson: Try Headless Chrome (with Puppeteer) on AWS Cloud9 (EC2 Amazon Linux).](https://github.com/kazuma1989/headless-chrome-cloud9-handson) にあります。
 
+### Node.js プロジェクトの初期化
+
+サーバーを起動したり、Headless Chrome を操作したりするため、[Node.js](https://nodejs.org/en/) を使います。
+まず、Cloud9 にデフォルトでインストールされている Node.js のバージョン (v6.12.3) をアップグレードします：
+
+```bash
+nvm install 8.9.4
+nvm alias default v8.9.4
+```
+
+次に、自分のプロジェクトフォルダーを作成し、Node.js プロジェクトとして初期化します：
+
+```bash
+mkdir myapp
+cd myapp
+npm init -y
+```
+
+`package.json` が生成されたら成功です：
+
+```diff
++ myapp/
++ └── package.json
+```
+
 ### index.html 作成
+
+index.html を追加します。
+
+```diff
+  myapp/
++ └── index.html
+```
 
 ```html
 ```
-
-### Node v8 インストール
 
 ### serve インストール
 

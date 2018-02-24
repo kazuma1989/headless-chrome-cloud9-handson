@@ -1,0 +1,25 @@
+{
+  "name": "headless-chrome-cloud9-handson",
+  "version": "1.0.0",
+  "description": "Try Headless Chrome (with Puppeteer) on AWS Cloud9 (EC2 Amazon Linux).",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kazuma1989/headless-chrome-cloud9-handson.git"
+  },
+  "keywords": [
+    "Headless Chrome",
+    "Puppeteer",
+    "AWS Cloud9",
+    "Amazon Linux"
+  ],
+  "author": "kazuma1989 <https://github.com/kazuma1989>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kazuma1989/headless-chrome-cloud9-handson/issues"
+  },
+  "homepage": "https://github.com/kazuma1989/headless-chrome-cloud9-handson#readme"
+}
