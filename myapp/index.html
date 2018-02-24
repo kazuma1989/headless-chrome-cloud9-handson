@@ -2,12 +2,23 @@
 <meta charset="UTF-8">
 <title>My App</title>
 <style>
-    main {
+    html {
+        background: gainsboro;
+        border: solid 1px black;
+        box-sizing: border-box;
         color: red;
+        height: 100%;
     }
 </style>
 
 <main></main>
 <script>
-    document.querySelector('main').textContent = new Date();
+    const date = new Date().toLocaleString('ja-JP-u-ca-japanese', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        weekday: 'short',
+    });
+
+    document.querySelector('main').textContent = date;
 </script>

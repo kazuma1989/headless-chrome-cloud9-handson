@@ -74,7 +74,7 @@ npm init -y
 ### index.html 作成
 
 index.html を追加します。
-Headless Chrome の動作を確認するため、最低限のスタイルとスクリプトを追加しています：
+Headless Chrome の動作を確認しやすくするため、最低限のスタイルとスクリプトを追加しています：
 
 ```diff
   myapp/
@@ -87,14 +87,25 @@ Headless Chrome の動作を確認するため、最低限のスタイルとス�
 <meta charset="UTF-8">
 <title>My App</title>
 <style>
-    main {
+    html {
+        background: gainsboro;
+        border: solid 1px black;
+        box-sizing: border-box;
         color: red;
+        height: 100%;
     }
 </style>
 
 <main></main>
 <script>
-    document.querySelector('main').textContent = new Date();
+    const date = new Date().toLocaleString('ja-JP-u-ca-japanese', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        weekday: 'short',
+    });
+
+    document.querySelector('main').textContent = date;
 </script>
 ```
 
@@ -126,7 +137,7 @@ package.json には `serve` スクリプトを追加し、`npm run serve` によ
 `npm run serve` によってサーバーを起動したら、Cloud9 メニュー > Preview > Preview Running Application を選択して、アプリケーションを表示します。
 以下のような画面が表示されれば成功です：
 
-![App preview](images/01_serve-install-result.png)
+![App preview](images/app-preview.png)
 
 
 ## Headless Chrome によるテスト作成
