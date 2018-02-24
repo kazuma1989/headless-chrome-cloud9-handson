@@ -197,7 +197,7 @@ const puppeteer = require('puppeteer');
     const page = await browser.newPage();
 
     await page.goto('http://localhost:8080/');
-    await page.screenshot({ path: 'example.png' });
+    await page.screenshot({ path: 'screenshot.png' });
 
     await page.close();
     await browser.close();
@@ -214,12 +214,47 @@ package.json に test スクリプトの定義を追加しておきます：
    },
 ```
 
-`npm run serve` でアプリケーションを起動し、`npm run test` でテストが実行されます。
+`npm run serve` でアプリケーションを起動し、別のターミナルから `npm run test` を実行することでテストができます…：
+
+```bash
+(node:8637) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): Error: Failed to launch chrome!
+/home/ec2-user/environment/myapp/node_modules/puppeteer/.local-chromium/linux-536395/chrome-linux/chrome: error while loading shared libraries: libXcursor.so.1: cannot open shared object file: No such file or directory
+
+
+TROUBLESHOOTING: https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md
+
+(node:8637) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+```
+
+おや、エラーになってしまいました。
+解決しましょう。
 
 
 ## Troubleshooting Puppeteer on Cloud9
 
 ### Run Headless Chrome on EC2 Amazon Linux
+
+エラーの内容や、[TROUBLESHOOTING](https://github.com/GoogleChrome/puppeteer/blob/master/docs/troubleshooting.md) のリンク先を見ると、どうやら依存パッケージが不足しているようです。
+この問題は、`shared libraries: libXcursor.so.1` というメッセージやリンク先の手順を手がかりにパッケージをインストールしても、素直には解決しませんでした。
+
+しばらく検索したあと、次ような投稿を見つけ、解決することができました。
+最高、ありがとう！：
+
+- [MockingBot - Run Puppeteer/Chrome Headless on EC2 Amazon Linux](https://mockingbot.com/posts/run-puppeteer-chrome-headless-on-ec2-amazon-linux)
+
+ここに書かれている、必要なコマンドは、次のスクリプトにまとめたので、これを実行するだけで OK です：
+
+[install-chrome-dependencies.sh](install-chrome-dependencies.sh)
+
+```bash
+sh install-chrome-dependencies.sh
+```
+
+`npm run serve` の後に `npm run test` で、今度こそテストが実行され、スクリーンショットが生成されます：
+
+![Generated screenshot](myapp/screenshot.png)
+
+🎉
 
 ### Install a Japanese font
 
